@@ -1,0 +1,7 @@
+<%= form_for @conn, "/login", fn f -> %>
+  <%= label f, :name %>
+  <%= text_input f, :name %>
+  <div>
+    <%= submit "Log in" %>
+  </div>
+<% end %>

@@ -1,0 +1,23 @@
+<%= if @task.completed do %>
+  <div class="card" style="width: 26rem; border-color: green">
+<%= else %>
+  <div class="card" style="width: 26rem;">
+<%= end %>
+
+  <div class="card-body">
+  <h5 class="card-title"><%= @task.title %></h5>
+<p class="card-text">
+  <%= @task.description %>
+</p>
+<p class="card-text">
+  Time spent: <%= @task.time %> min(s)
+</p>
+
+<%= link "+ 15 mins", to: Routes.task_path(@conn, :increment, @task), method: :post, class: "card-link" %>
+<%= link "- 15 mins", to: Routes.task_path(@conn, :decrement, @task), method: :post, class: "card-link" %>
+<%= link "Complete", to: Routes.task_path(@conn, :complete, @task), method: :post, class: "card-link" %>
+<%# <%= link "Edit", to: Routes.task_path(@conn, :edit, @task), class: "card-link" %>
+<%= link "Delete", to: Routes.task_path(@conn, :delete, @task), method: :delete, data: [confirm: "Are you sure?"], class: "card-link" %>
+</div>
+</div>
+

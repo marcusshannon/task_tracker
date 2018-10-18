@@ -1,0 +1,13 @@
+/* This file is for your main application css. */
+
+@import "./bootstrap.min.css";
+@import "./phoenix.css";
+
+
+.task-grid {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-row-gap: 20px;
+    justify-items: center;
+  }
+  

@@ -1,0 +1,10 @@
+<h1><%= @user.name %></h1>
+<div><%= link "Log out", to: Routes.user_path(@conn, :log_out) %></div>
+<div><%= button "Create task", to: Routes.task_path(@conn, :new), method: "get", class: "btn btn-primary" %></div>
+<h1>Assigned tasks</h1>
+
+<div class="task-grid">
+<%= for task <- @user.tasks do %>
+  <%= render TaskTrackerWeb.TaskView, "show.html", task: task, conn: @conn%>
+<% end %>
+</div>

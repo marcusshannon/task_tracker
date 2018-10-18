@@ -1,0 +1,3 @@
+<div>Welcome to Task Tracker</div>
+<div><%= link "Register", to: Routes.user_path(@conn, :new) %></div>
+</div><%= link "Log in", to: Routes.page_path(@conn, :log_in) %></div>
