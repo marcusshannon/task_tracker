@@ -2,6 +2,7 @@ defmodule TaskTrackerWeb.TaskController do
   use TaskTrackerWeb, :controller
 
   alias TaskTracker.Tasks
+  alias TaskTracker.Users
   alias TaskTracker.Tasks.Task
 
   def index(conn, _params) do
@@ -12,6 +13,42 @@ defmodule TaskTrackerWeb.TaskController do
   def new(conn, _params) do
     changeset = Tasks.change_task(%Task{})
     render(conn, "new.html", changeset: changeset)
+  end
+
+  def create(conn, %{"task" => %{"user_id" => user_id} = task_params}) do
+    if user_id == "" do
+      case Tasks.create_task(Map.put(task_params, "user_id", conn.assigns.current_user.id)) do
+        {:ok, task} ->
+          conn
+          |> put_flash(:info, "Task created successfully.")
+          |> redirect(to: Routes.user_path(conn, :show, conn.assigns.current_user.id))
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          render(conn, "new.html", changeset: changeset)
+      end
+    end
+
+    case Users.get_user(user_id) do
+      nil ->
+        conn
+        |> render(TaskTrackerWeb.ErrorView, "403.html")
+
+      user ->
+        if Tasks.check_assignable(conn.assigns.current_user, user) do
+          case Tasks.create_task(task_params) do
+            {:ok, task} ->
+              conn
+              |> put_flash(:info, "Task created successfully.")
+              |> redirect(to: Routes.user_path(conn, :show, conn.assigns.current_user.id))
+
+            {:error, %Ecto.Changeset{} = changeset} ->
+              render(conn, "new.html", changeset: changeset)
+          end
+        else
+          conn
+          |> render(TaskTrackerWeb.ErrorView, "403.html")
+        end
+    end
   end
 
   def create(conn, %{"task" => task_params}) do
@@ -62,7 +99,7 @@ defmodule TaskTrackerWeb.TaskController do
       |> redirect(to: Routes.user_path(conn, :show, conn.assigns.current_user.id))
     else
       conn
-      |> Phoenix.Controller.render(TaskTrackerWeb.ErrorView, "403.html")
+      |> render(TaskTrackerWeb.ErrorView, "403.html")
     end
   end
 
@@ -74,7 +111,7 @@ defmodule TaskTrackerWeb.TaskController do
       redirect(conn, to: Routes.user_path(conn, :show, conn.assigns.current_user.id))
     else
       conn
-      |> Phoenix.Controller.render(TaskTrackerWeb.ErrorView, "403.html")
+      |> render(TaskTrackerWeb.ErrorView, "403.html")
     end
   end
 
@@ -86,7 +123,7 @@ defmodule TaskTrackerWeb.TaskController do
       redirect(conn, to: Routes.user_path(conn, :show, conn.assigns.current_user.id))
     else
       conn
-      |> Phoenix.Controller.render(TaskTrackerWeb.ErrorView, "403.html")
+      |> render(TaskTrackerWeb.ErrorView, "403.html")
     end
   end
 
@@ -98,7 +135,7 @@ defmodule TaskTrackerWeb.TaskController do
       redirect(conn, to: Routes.user_path(conn, :show, conn.assigns.current_user.id))
     else
       conn
-      |> Phoenix.Controller.render(TaskTrackerWeb.ErrorView, "403.html")
+      |> render(TaskTrackerWeb.ErrorView, "403.html")
     end
   end
 

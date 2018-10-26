@@ -49,6 +49,22 @@ defmodule TaskTracker.Tasks do
       {:error, %Ecto.Changeset{}}
 
   """
+
+  def check_assignable(manager, user) do
+    manager.id == user.manager_id
+  end
+
+  def create_task(attrs, current_user_id) do
+    IO.inspect(
+      %Task{user_id: current_user_id}
+      |> Task.changeset(attrs)
+    )
+
+    %Task{user_id: current_user_id}
+    |> Task.changeset(attrs)
+    |> Repo.insert()
+  end
+
   def create_task(attrs \\ %{}) do
     %Task{}
     |> Task.changeset(attrs)

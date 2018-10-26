@@ -1,23 +1,29 @@
 <%= if @task.completed do %>
-  <div class="card" style="width: 26rem; border-color: green">
-<%= else %>
-  <div class="card" style="width: 26rem;">
-<%= end %>
+  <div class="card" style="width: 100%; border-color: green">
+<% else %>
+  <div class="card" style="width: 100%;">
+<% end %>
 
   <div class="card-body">
-  <h5 class="card-title"><%= @task.title %></h5>
+  <h3 class="card-title"><%= @task.title %></h3>
 <p class="card-text">
   <%= @task.description %>
 </p>
-<p class="card-text">
-  Time spent: <%= @task.time %> min(s)
-</p>
 
-<%= link "+ 15 mins", to: Routes.task_path(@conn, :increment, @task), method: :post, class: "card-link" %>
-<%= link "- 15 mins", to: Routes.task_path(@conn, :decrement, @task), method: :post, class: "card-link" %>
+<%= for block <- @task.blocks do %>
+  <%= form_for @conn, "/blocks", [as: :block, id: "block-#{block.id}"], fn f -> %>
+    <div>Start: <%= datetime_select f, :start, value: block.start, default: DateTime.utc_now() %></div>
+    <div>End: <%= datetime_select f, :end, value: block.end, default: DateTime.utc_now() %></div>
+  <button type="button" onclick="saveBlock(<%= block.id %>)">Save</button>
+  <button type="button" onclick="deleteBlock(<%= block.id %>)">Delete</button>
+  <% end %>
+<% end %>
+
+
+<button id="block-clock-<%= @task.id %>" type="button" onclick="startBlockClock(<%= @task.id %>, '<%= @token %>')">START WORKING</button>
 <%= link "Complete", to: Routes.task_path(@conn, :complete, @task), method: :post, class: "card-link" %>
+<%= link "Add time block", to: Routes.block_path(@conn, :create, task_id: @task.id), method: :post, class: "card-link" %>
 <%# <%= link "Edit", to: Routes.task_path(@conn, :edit, @task), class: "card-link" %>
 <%= link "Delete", to: Routes.task_path(@conn, :delete, @task), method: :delete, data: [confirm: "Are you sure?"], class: "card-link" %>
 </div>
 </div>
-

@@ -3,7 +3,7 @@
 git pull
 
 export MIX_ENV=prod
-export PORT=4793
+export PORT=4794
 export NODEBIN=`pwd`/assets/node_modules/.bin
 export PATH="$PATH:$NODEBIN"
 

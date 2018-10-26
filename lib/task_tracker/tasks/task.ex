@@ -8,6 +8,7 @@ defmodule TaskTracker.Tasks.Task do
     field(:completed, :boolean)
     field(:time, :integer)
     belongs_to(:user, TaskTracker.Users.User)
+    has_many(:blocks, TaskTracker.Blocks.Block)
 
     timestamps()
   end

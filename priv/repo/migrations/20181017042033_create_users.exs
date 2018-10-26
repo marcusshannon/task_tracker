@@ -3,11 +3,12 @@ defmodule TaskTracker.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add :name, :string
+      add(:name, :string)
+      add(:manager_id, references(:users, on_delete: :nothing))
 
       timestamps()
     end
 
-    create unique_index(:users, [:name])
+    create(unique_index(:users, [:name]))
   end
 end

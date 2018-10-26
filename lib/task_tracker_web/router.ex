@@ -21,13 +21,15 @@ defmodule TaskTrackerWeb.Router do
     post "/login", UserController, :log_in
     get "/logout", UserController, :log_out
     resources "/users", UserController, only: [:new, :create]
-    # resources "/tasks", TaskController, only: [:index, :create, :new]
-
+    
+    
     pipe_through :authenticate
+    resources "/blocks", BlockController, except: [:new, :edit]
     resources "/tasks", TaskController, only: [:create, :new, :delete]
     post "/increment/:id", TaskController, :increment
     post "/decrement/:id", TaskController, :decrement
     post "/complete/:id", TaskController, :complete
+
 
     pipe_through :owner
     resources "/users", UserController, only: [:show]

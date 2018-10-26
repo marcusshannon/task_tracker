@@ -37,6 +37,8 @@ defmodule TaskTracker.Users do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  def get_user(id), do: Repo.get(User, id)
+
   @doc """
   Creates a user.
 
@@ -107,7 +109,28 @@ defmodule TaskTracker.Users do
   end
 
   def load_tasks(user) do
+    IO.inspect(
+      user
+      |> Repo.preload([
+        :manager,
+        users: [tasks: from(t in TaskTracker.Tasks.Task, order_by: t.id)],
+        tasks:
+          {from(t in TaskTracker.Tasks.Task, order_by: t.id),
+           [blocks: from(b in TaskTracker.Blocks.Block, order_by: b.id)]}
+      ])
+    )
+
     user
-    |> Repo.preload([tasks: from(t in TaskTracker.Tasks.Task, order_by: t.id)])
+    |> Repo.preload([
+      :manager,
+      users: [
+        tasks:
+          {from(t in TaskTracker.Tasks.Task, order_by: t.id),
+           [blocks: from(b in TaskTracker.Blocks.Block, order_by: b.id)]}
+      ],
+      tasks:
+        {from(t in TaskTracker.Tasks.Task, order_by: t.id),
+         [blocks: from(b in TaskTracker.Blocks.Block, order_by: b.id)]}
+    ])
   end
 end

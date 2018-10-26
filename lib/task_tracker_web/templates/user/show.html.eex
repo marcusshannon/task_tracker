@@ -1,10 +1,62 @@
 <h1><%= @user.name %></h1>
-<div><%= link "Log out", to: Routes.user_path(@conn, :log_out) %></div>
-<div><%= button "Create task", to: Routes.task_path(@conn, :new), method: "get", class: "btn btn-primary" %></div>
-<h1>Assigned tasks</h1>
+<br />
+<br />
+<div><%= button "Log out", to: Routes.user_path(@conn, :log_out), method: "get" %></div>
+<div><%= button "Create task", to: Routes.task_path(@conn, :new), method: "get" %></div>
 
+<br />
+<br />
+
+<%= if @user.manager do %> 
+  <div><b>Current manager:</b> <%= @user.manager.name %></div>
+<% else %>
+  <div><b>Current manager:</b> none</div>
+<% end %>
+<br />
+<%= if length(@user.users) > 0 do %> 
+  <div><b>Currently managing:</b></div>
+  <%= for user <- @user.users do %>
+    <div><%= user.name %></div>
+  <% end %> 
+<% else %>
+  <div><b>Currently managing:</b> none</div>
+<% end %>
+
+<br />
+<br />
+
+<h1>Assigned tasks</h1>
 <div class="task-grid">
 <%= for task <- @user.tasks do %>
-  <%= render TaskTrackerWeb.TaskView, "show.html", task: task, conn: @conn%>
+  <%= render TaskTrackerWeb.TaskView, "show.html", task: task, conn: @conn, token: @token%>
 <% end %>
 </div>
+<br />
+<br />
+<h1>Manager Report</h1>
+<%= for user <- @user.users do %>
+  <div><%= user.name %>'s Tasks:</div>
+  <%= for task <- user.tasks do %>
+    <div class="card" style="width: 100%; margin-bottom: 20px">
+      <div class="card-body">
+    <h3 class="card-title"><%= task.title %></h3>
+    <p class="card-text">
+      <%= task.description %>
+    </p>
+    <p class="card-text">
+      Completed: <%= task.completed %>
+    </p>
+    <br />
+    <%= for block <- task.blocks do %>
+      <p class="card-text">
+      * start: <%= block.start %> | 
+      end: <%= NaiveDateTime.to_string(block.end) %>
+     </p>
+
+    <% end %>
+    </div>
+    </div>
+  <% end %>
+  
+
+<% end %>

@@ -32,7 +32,7 @@ defmodule TaskTrackerWeb.UserController do
       Users.get_user!(id)
       |> Users.load_tasks()
 
-    render(conn, "show.html", user: user)
+    render(conn, "show.html", user: user, token: get_csrf_token())
   end
 
   def edit(conn, %{"id" => id}) do

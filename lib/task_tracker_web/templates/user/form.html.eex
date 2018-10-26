@@ -9,6 +9,10 @@
   <%= text_input f, :name %>
   <%= error_tag f, :name %>
 
+  <%= label f, :manager_id %>
+  <%= text_input f, :manager_id %>
+  <%= error_tag f, :manager_id %>
+
   <div>
     <%= submit "Register" %>
   </div>
